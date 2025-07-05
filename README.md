@@ -1,6 +1,10 @@
 # KX Trainer Free
 
-KX Trainer Free is a simple game trainer for Guild Wars 2 that we've decided to make open-source. The code has evolved since its origin in 2018, and we believe in transparency for tools like this.
+**This is the free, open-source version of KX Trainer. For the full-featured premium version with advanced tools and support, please visit our official website: [kxtools.xyz](https://kxtools.xyz)**
+
+---
+
+KX Trainer Free is a simple game utility for Guild Wars 2 that we've decided to make open-source. The code has evolved since its origin in 2018, and we believe in transparency for tools like this.
 
 [➡️ Download the Latest Release](https://github.com/Krixx1337/KX-Trainer-Free/releases/latest)
 
@@ -10,7 +14,7 @@ KX Trainer Free is a simple game trainer for Guild Wars 2 that we've decided to 
 
 We believe transparency is important, especially for game tools. KX Trainer Free has been around for a while, and opening it up allows the community to see how it works, learn from it, or contribute.
 
-While our main development efforts focus on the advanced features in our paid tools available at [kxtools.xyz](https://kxtools.xyz), **KX Trainer Free will be actively maintained** to ensure it remains functional after Guild Wars 2 updates and to fix critical bugs. However, new features exclusive to the paid version will not be added here. We hope the community finds this base useful and potentially builds upon it.
+While our main development efforts focus on the advanced features in our **[premium tools available at kxtools.xyz](https://kxtools.xyz)**, KX Trainer Free will be actively maintained to ensure it remains functional after Guild Wars 2 updates and to fix critical bugs. New features exclusive to the premium version will not be added here. We hope the community finds this base useful and potentially builds upon it.
 
 ## A Little History
 
@@ -41,6 +45,8 @@ KX Trainer Free is a C++ project designed to work on Windows using Visual Studio
     *   Select the desired build configuration (e.g., Debug/Release, x64).
     *   Build the solution (Build > Build Solution or `Ctrl+Shift+B`).
 
-## Contact
+## Contact & Community
 
 For any questions or support, feel free to join our [Discord server](https://discord.gg/z92rnB4kHm).
+
+Explore all our Guild Wars 2 projects and the premium KX Trainer at **[kxtools.xyz](https://kxtools.xyz)**.
