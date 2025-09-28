@@ -8,6 +8,8 @@ KX Trainer Free is a simple game utility for Guild Wars 2 that we've decided to 
 
 [➡️ Download the Latest Release](https://github.com/Krixx1337/KX-Trainer-Free/releases/latest)
 
+> **Disclaimer:** This tool is provided for educational purposes. Users are responsible for using this tool in compliance with all applicable terms of service. Use responsibly and at your own risk.
+
 ![KX Trainer Free GUI](./images/kx_trainer_free_imgui_v3.png)
 
 ## Why Open-Source?
