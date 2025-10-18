@@ -13,7 +13,18 @@
 #include <vector>
 #include <mutex>
 
-HackGUI::HackGUI(Hack& hack) : m_hack(hack), m_rebinding_hotkey_id(HotkeyID::NONE) {
+
+/**
+ * Constructor for HackGUI.
+ * @m_hack: Reference to the Hack instance for performing actions.
+ * @m_rebinding_hotkey_id: ID of the hotkey currently being rebound, or NONE.
+ * 
+ * description - This class manages the graphical user interface for the KX Trainer hack,
+ * allowing users to configure hotkeys, toggle features, and view logs.
+ * It interacts with the Hack class to perform actions in the game.
+ */
+HackGUI::HackGUI(Hack& hack) : m_hack(hack), m_rebinding_hotkey_id(HotkeyID::NONE)
+{
     // Define all available hotkeys and their default properties
     m_hotkeys = {
         {HotkeyID::SAVE_POS,             "Save Position",   Constants::Hotkeys::KEY_SAVEPOS,         HotkeyTriggerType::ON_PRESS, [](Hack& h, bool) { h.savePosition(); }},
@@ -32,7 +43,10 @@ HackGUI::HackGUI(Hack& hack) : m_hack(hack), m_rebinding_hotkey_id(HotkeyID::NON
     // TODO: Load saved currentKeyCode values from a config file here, overwriting the defaults set in HotkeyInfo constructor
 }
 
-// Renders label, key name, and Change button for a single hotkey configuration
+/**
+ * RenderHotkeyControl - Renders the UI controls for a single hotkey.
+ * @hotkey: Reference to the HotkeyInfo struct representing the hotkey to render.
+ */
 void HackGUI::RenderHotkeyControl(HotkeyInfo& hotkey)
 {
     ImGui::Text("%s:", hotkey.name);
@@ -62,7 +76,9 @@ void HackGUI::RenderHotkeyControl(HotkeyInfo& hotkey)
     }
 }
 
-// Renders the "Always on Top" checkbox and applies the setting
+/**
+ * RenderAlwaysOnTop - Renders the "Always on Top" checkbox and manages window z-order.
+ */
 void HackGUI::RenderAlwaysOnTop()
 {
     static bool always_on_top_checkbox = false;
@@ -90,7 +106,9 @@ void HackGUI::RenderAlwaysOnTop()
     ImGui::Spacing();
 }
 
-// Checks registered hotkeys and calls corresponding actions
+/**
+ * HandleHotkeys - Processes registered hotkeys and triggers their actions.
+ */
 void HackGUI::HandleHotkeys()
 {
     // Don't process hotkeys if currently rebinding one
@@ -121,7 +139,9 @@ void HackGUI::HandleHotkeys()
     }
 }
 
-// Handles the logic when the user is actively rebinding a hotkey
+/**
+ * HandleHotkeyRebinding - Captures key input for rebinding hotkeys.
+ */
 void HackGUI::HandleHotkeyRebinding()
 {
     if (m_rebinding_hotkey_id == HotkeyID::NONE)
@@ -174,7 +194,9 @@ void HackGUI::HandleHotkeyRebinding()
     }
 }
 
-// Renders the collapsible section with toggle checkboxes
+/**
+ * RenderTogglesSection - Renders the toggles section of the GUI.
+ */
 void HackGUI::RenderTogglesSection()
 {
     if (ImGui::CollapsingHeader("Toggles", ImGuiTreeNodeFlags_DefaultOpen))
@@ -212,7 +234,9 @@ void HackGUI::RenderTogglesSection()
     }
 }
 
-// Renders the collapsible section with action buttons
+/**
+ * RenderActionsSection - Renders the actions section of the GUI.
+ */
 void HackGUI::RenderActionsSection()
 {
     if (ImGui::CollapsingHeader("Actions", ImGuiTreeNodeFlags_DefaultOpen))
@@ -227,7 +251,9 @@ void HackGUI::RenderActionsSection()
     }
 }
 
-// Renders the collapsible section for configuring hotkeys
+/**
+ * RenderHotkeysSection - Renders the hotkeys configuration section of the GUI.
+ */
 void HackGUI::RenderHotkeysSection()
 {
     if (ImGui::CollapsingHeader("Hotkeys"))
@@ -287,7 +313,9 @@ void HackGUI::RenderHotkeysSection()
     }
 }
 
-// Renders the collapsible log section
+/**
+ * RenderLogSection - Renders the log section of the GUI.
+ */
 void HackGUI::RenderLogSection()
 {
     // Assumes StatusUI is still used for logging until Step 1 is done.
@@ -318,7 +346,9 @@ void HackGUI::RenderLogSection()
     }
 }
 
-// Renders the collapsible info/about section
+/**
+ * RenderInfoSection - Renders the info section of the GUI with links.
+ */
 void HackGUI::RenderInfoSection()
 {
     if (ImGui::CollapsingHeader("Info"))
@@ -347,7 +377,10 @@ void HackGUI::RenderInfoSection()
     }
 }
 
-// Main render function for the HackGUI window
+/**
+ * renderUI - Main rendering function for the GUI.
+ * Returns true if the user requested to exit (closed the window).
+ */
 bool HackGUI::renderUI()
 {
     static bool main_window_open = true;
