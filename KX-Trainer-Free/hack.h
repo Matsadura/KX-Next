@@ -8,13 +8,21 @@
 #include <string>
 #include <vector>
 
-class HackInitializationError : public std::runtime_error {
+/**
+ * HackInitializationError - Custom exception for initialization failures.
+ */
+class HackInitializationError : public std::runtime_error
+{
 public:
     HackInitializationError(const std::string& message)
         : std::runtime_error(message) {}
 };
 
-class Hack {
+/**
+ * Hack - Main class for managing game hacks and memory manipulation.
+ */
+class Hack
+{
 public:
     Hack(std::function<void(const std::string&)> statusCallback);
     ~Hack();

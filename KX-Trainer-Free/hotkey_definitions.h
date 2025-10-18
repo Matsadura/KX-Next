@@ -5,7 +5,11 @@
 
 class Hack; // Forward declaration needed for the action function signature
 
-enum class HotkeyID {
+/**
+ * HotkeyID - Enum representing unique identifiers for each hotkey.
+ */
+enum class HotkeyID
+{
     NONE = -1, // Represents no hotkey being rebound
     SAVE_POS,
     LOAD_POS,
@@ -20,24 +24,37 @@ enum class HotkeyID {
     HOLD_FLY
 };
 
-enum class HotkeyTriggerType {
+/**
+ * HotkeyTriggerType - Enum representing how a hotkey is triggered.
+ */
+enum class HotkeyTriggerType
+{
     ON_PRESS, // Trigger once when key goes down
     ON_HOLD   // Trigger continuously while key is held
 };
 
-struct HotkeyInfo {
-    HotkeyID id;
-    const char* name;           // User-visible name (e.g., "Save Position")
-    int defaultKeyCode;     // Default VK code from Constants::Hotkeys
-    int currentKeyCode;     // Currently assigned VK code (0 if unbound)
-    HotkeyTriggerType triggerType;
-    std::function<void(Hack&, bool)> action; // bool: true=pressed/held
+/**
+ * HotkeyInfo - Struct representing a hotkey's properties and action.
+ */
+struct HotkeyInfo
+{
+    using HotkeyAction = std::function<void(Hack&, bool)>;
 
-    // Default constructor needed for vector initialization if not using emplace_back with all args
-    HotkeyInfo() : id(HotkeyID::NONE), name(""), defaultKeyCode(0), currentKeyCode(0), triggerType(HotkeyTriggerType::ON_PRESS), action(nullptr) {}
+    HotkeyID id = HotkeyID::NONE;
+    const char* name = "";
+    int defaultKeyCode = 0;
+    int currentKeyCode = 0; // 0 = unbound
+    HotkeyTriggerType triggerType = HotkeyTriggerType::ON_PRESS;
+    HotkeyAction action{}; // empty by default
 
-    // Constructor for easier initialization
-    HotkeyInfo(HotkeyID _id, const char* _name, int _defaultKey, HotkeyTriggerType _type, std::function<void(Hack&, bool)> _action)
-        : id(_id), name(_name), defaultKeyCode(_defaultKey), currentKeyCode(0), // Default to unbound (0) initially
-          triggerType(_type), action(std::move(_action)) {}
+    HotkeyInfo() = default;
+
+    HotkeyInfo(HotkeyID id_, const char* name_, int defaultKey, HotkeyTriggerType type_, HotkeyAction action_)
+        : id(id_),
+          name(name_),
+          defaultKeyCode(defaultKey),
+          currentKeyCode(0),
+          triggerType(type_),
+          action(std::move(action_))
+    {}
 };
