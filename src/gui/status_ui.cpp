@@ -1,33 +1,56 @@
 #include "status_ui.h"
 #include "../libs/imgui/imgui.h"
 
-namespace StatusUI {
+/**
+ * StatusUI namespace
+ * Handles the status display and logging for the application.
+ */
+namespace StatusUI
+{
 
     // Internal state
     static std::vector<std::string> g_statusMessages;
     static std::mutex               g_statusMutex; // Protects g_statusMessages
     static const size_t             MAX_STATUS_MESSAGES = 50; // History limit
 
-    void AddMessage(const std::string& message) {
+    /**
+	 * AddMessage - Adds a status message to the log.
+	 * @message: The message string to add.
+     */
+    void AddMessage(const std::string& message)
+    {
         std::lock_guard<std::mutex> lock(g_statusMutex);
         g_statusMessages.push_back(message);
         // Trim old messages if exceeding the limit
-        while (g_statusMessages.size() > MAX_STATUS_MESSAGES) {
+        while (g_statusMessages.size() > MAX_STATUS_MESSAGES)
             g_statusMessages.erase(g_statusMessages.begin());
-        }
     }
 
-    void ClearMessages() {
+    /**
+     * ClearMessages - Clears all status messages from the log.
+	 */
+    void ClearMessages()
+    {
         std::lock_guard<std::mutex> lock(g_statusMutex);
         g_statusMessages.clear();
     }
 
-    std::vector<std::string> GetMessages() {
+    /**
+     * GetMessages - Retrieves a copy of the current status messages.
+     * Returns: A vector of status message strings.
+	 */
+    std::vector<std::string> GetMessages()
+    {
         std::lock_guard<std::mutex> lock(g_statusMutex);
-        return g_statusMessages; // Return a copy
+        return (g_statusMessages); // Return a copy
     }
 
-    bool Render(const std::string& error_msg) {
+    /**
+	 * Render - Renders the status/loading window.
+     * @error_msg: Optional error message to display.
+	 */
+    bool Render(const std::string& error_msg)
+    {
         bool should_exit = false;
 
         const ImGuiViewport* viewport = ImGui::GetMainViewport();
@@ -43,7 +66,8 @@ namespace StatusUI {
         ImVec2 contentRegionAvail = ImGui::GetContentRegionAvail();
         ImGuiStyle& style = ImGui::GetStyle();
 
-        if (!error_msg.empty()) {
+        if (!error_msg.empty())
+        {
             // --- Error Display ---
             const char* errorTitle = "Initialization Failed!";
             float titleWidth = ImGui::CalcTextSize(errorTitle).x;
@@ -66,12 +90,11 @@ namespace StatusUI {
             float buttonPosY = ImGui::GetWindowHeight() - buttonHeight - style.WindowPadding.y * 2.0f;
             ImGui::SetCursorPos(ImVec2(style.WindowPadding.x + buttonPosX, buttonPosY));
 
-            if (ImGui::Button("Exit Application", ImVec2(buttonWidth, 0))) {
+            if (ImGui::Button("Exit Application", ImVec2(buttonWidth, 0)))
                 should_exit = true;
-            }
-
         }
-        else {
+        else
+        {
             // --- Loading Display ---
             const char* loadingTitle = "Initializing KX Next...";
             float titleWidth = ImGui::CalcTextSize(loadingTitle).x;
@@ -86,26 +109,29 @@ namespace StatusUI {
 
             { // Scope for mutex lock
                 std::lock_guard<std::mutex> lock(g_statusMutex);
-                for (const auto& msg : g_statusMessages) {
+                for (const auto& msg : g_statusMessages)
+                {
                     // Basic coloring based on prefix
                     ImVec4 color = ImGui::GetStyleColorVec4(ImGuiCol_Text);
-                    if (msg.rfind("ERROR:", 0) == 0)      color = ImVec4(1.0f, 0.3f, 0.3f, 1.0f);
-                    else if (msg.rfind("WARN:", 0) == 0)  color = ImVec4(1.0f, 1.0f, 0.3f, 1.0f);
-                    else if (msg.rfind("INFO:", 0) == 0)  color = ImVec4(0.5f, 1.0f, 0.5f, 1.0f);
+                    if (msg.rfind("ERROR:", 0) == 0)
+                        color = ImVec4(1.0f, 0.3f, 0.3f, 1.0f);
+                    else if (msg.rfind("WARN:", 0) == 0)
+                        color = ImVec4(1.0f, 1.0f, 0.3f, 1.0f);
+                    else if (msg.rfind("INFO:", 0) == 0)
+                        color = ImVec4(0.5f, 1.0f, 0.5f, 1.0f);
                     ImGui::TextColored(color, "%s", msg.c_str());
                 }
             } // Mutex released here
 
             // Auto-scroll to bottom
-            if (ImGui::GetScrollY() >= ImGui::GetScrollMaxY() - ImGui::GetTextLineHeight() * 2) {
+            if (ImGui::GetScrollY() >= ImGui::GetScrollMaxY() - ImGui::GetTextLineHeight() * 2)
                 ImGui::SetScrollHereY(1.0f);
-            }
             ImGui::EndChild();
         }
 
         ImGui::End(); // End StatusWindow
 
-        return should_exit;
+        return (should_exit);
     }
 
 } // namespace StatusUI

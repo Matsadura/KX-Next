@@ -36,8 +36,15 @@ public:
     bool Patch(uintptr_t address, const void* data, size_t size) const; // Writes raw data
 
     // Accessors
-    DWORD GetProcessId() const { return m_processId; }
-    HANDLE GetProcessHandle() const { return m_processHandle; }
+    DWORD GetProcessId() const
+    {
+        return m_processId;
+    }
+
+    HANDLE GetProcessHandle() const
+    {
+        return m_processHandle;
+    }
 
 
 private:
@@ -58,23 +65,25 @@ private:
 
 // Template Implementations
 template <typename T>
-bool ProcessMemoryManager::Read(uintptr_t address, T& outValue) const {
-    if (!IsAttached()) return false;
+bool ProcessMemoryManager::Read(uintptr_t address, T& outValue) const
+{
+    if (!IsAttached())
+        return (false);
     SIZE_T bytesRead = 0;
-    if (!ReadProcessMemory(m_processHandle, reinterpret_cast<LPCVOID>(address), &outValue, sizeof(T), &bytesRead)) {
-        return false;
-    }
-    return bytesRead == sizeof(T); // Verify correct number of bytes were read
+    if (!ReadProcessMemory(m_processHandle, reinterpret_cast<LPCVOID>(address), &outValue, sizeof(T), &bytesRead))
+        return (false);
+    return (bytesRead == sizeof(T)); // Verify correct number of bytes were read
 }
 
 template <typename T>
-bool ProcessMemoryManager::Write(uintptr_t address, const T& value) const {
-    if (!IsAttached()) return false;
+bool ProcessMemoryManager::Write(uintptr_t address, const T& value) const
+{
+    if (!IsAttached())
+        return (false);
     SIZE_T bytesWritten = 0;
-    if (!WriteProcessMemory(m_processHandle, reinterpret_cast<LPVOID>(address), &value, sizeof(T), &bytesWritten)) {
-        return false;
-    }
-    return bytesWritten == sizeof(T); // Verify correct number of bytes were written
+    if (!WriteProcessMemory(m_processHandle, reinterpret_cast<LPVOID>(address), &value, sizeof(T), &bytesWritten))
+        return (false);
+    return (bytesWritten == sizeof(T)); // Verify correct number of bytes were written
 }
 
 

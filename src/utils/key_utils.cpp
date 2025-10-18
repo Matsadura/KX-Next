@@ -9,7 +9,8 @@
  * @vk_code: The virtual key code to convert.
  * Returns: A pointer to a string containing the key name.
  */
-const char* GetKeyName(int vk_code) {
+const char* GetKeyName(int vk_code)
+{
     if (vk_code == 0)
         return ("None");
 

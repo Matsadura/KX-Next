@@ -5,7 +5,12 @@
 #include <vector>
 #include <mutex> // Required for thread safety implementation detail
 
-namespace StatusUI {
+/**
+ * StatusUI namespace
+ * Handles the status display and logging for the application.
+ */
+namespace StatusUI
+{
 
     // Adds a message to the status log (thread-safe).
     void AddMessage(const std::string& message);

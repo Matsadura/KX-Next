@@ -4,7 +4,9 @@
 #include <d3d11.h>
 #include <windows.h>
 
-namespace D3DManager {
+
+namespace D3DManager
+{
 
     // Initializes the D3D device, context, and swap chain for the given window.
     bool Initialize(HWND hWnd);

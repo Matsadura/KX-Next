@@ -7,6 +7,10 @@
 
 class Hack;
 
+/**
+ * @class HackGUI
+ * Manages the graphical user interface for the KX Next hack.
+ */
 class HackGUI {
 public:
     HackGUI(Hack& hack);

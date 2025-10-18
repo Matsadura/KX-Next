@@ -2,7 +2,12 @@
 
 #include <windows.h>
 
-namespace Constants {
+/**
+ * Constants namespace
+ * Holds all constant values used throughout the application.
+ */
+namespace Constants
+{
     // Application Info
     constexpr int APP_VERSION = 20100;
     constexpr char APP_NAME[] = "KX Next";

@@ -2,7 +2,8 @@
 #include <dxgi.h>
 #include <cstdio> // For error logging during init failure
 
-namespace D3DManager {
+namespace D3DManager
+{
 
     // Internal state
     static ID3D11Device* g_pd3dDevice = nullptr;
@@ -15,8 +16,15 @@ namespace D3DManager {
     static void CreateRenderTargetInternal();
     static void CleanupRenderTargetInternal();
 
-    bool Initialize(HWND hWnd) {
-        if (!hWnd) return false;
+    /**
+	 * Initialize - Initializes the D3D11 device, context, and swap chain.
+	 * @hWnd: Handle to the application window.
+	 * Returns: true on success, false on failure.
+     */
+    bool Initialize(HWND hWnd)
+    {
+        if (!hWnd)
+            return (false);
         g_hWnd = hWnd;
 
         DXGI_SWAP_CHAIN_DESC sd;
@@ -54,24 +62,30 @@ namespace D3DManager {
             &featureLevel, &g_pd3dDeviceContext);
 
         // Fallback to WARP driver if hardware fails
-        if (FAILED(res)) {
+        if (FAILED(res))
+        {
             fprintf(stderr, "D3D11CreateDeviceAndSwapChain (Hardware) failed: 0x%lx\n", res);
             res = D3D11CreateDeviceAndSwapChain(nullptr, D3D_DRIVER_TYPE_WARP, nullptr, createDeviceFlags,
                 featureLevelArray, ARRAYSIZE(featureLevelArray), D3D11_SDK_VERSION,
                 &sd, &g_pSwapChain, &g_pd3dDevice, &featureLevel, &g_pd3dDeviceContext);
-            if (FAILED(res)) {
+            if (FAILED(res))
+            {
                 fprintf(stderr, "D3D11CreateDeviceAndSwapChain (WARP) failed: 0x%lx\n", res);
                 Shutdown();
-                return false;
+                return (false);
             }
             fprintf(stderr, "Using WARP (Software) D3D11 Driver.\n");
         }
 
         CreateRenderTargetInternal();
-        return true;
+        return (true);
     }
 
-    void Shutdown() {
+    /**
+     * Shutdown - Cleans up and releases D3D11 resources.
+	 */
+    void Shutdown()
+    {
         CleanupRenderTargetInternal();
         if (g_pSwapChain) {
             g_pSwapChain->SetFullscreenState(FALSE, NULL); // Ensure windowed before release
@@ -91,15 +105,21 @@ namespace D3DManager {
         g_hWnd = nullptr;
     }
 
-    void HandleResize(UINT width, UINT height) {
-        if (!g_pSwapChain || width == 0 || height == 0) {
+    /**
+	 * HandleResize - Handles window resize events by resizing the swap chain buffers
+     * @width: New width of the window.
+     * @height: New height of the window.
+     */
+    void HandleResize(UINT width, UINT height)
+    {
+        if (!g_pSwapChain || width == 0 || height == 0)
             return; // Cannot resize if invalid
-        }
 
         CleanupRenderTargetInternal(); // Release existing RTV
 
         HRESULT hr = g_pSwapChain->ResizeBuffers(0, width, height, DXGI_FORMAT_UNKNOWN, 0);
-        if (FAILED(hr)) {
+        if (FAILED(hr))
+        {
             fprintf(stderr, "Error resizing swap chain buffers: 0x%lx\n", hr);
             // Consider more robust error handling / reinitialization if required
             return;
@@ -108,31 +128,43 @@ namespace D3DManager {
         CreateRenderTargetInternal(); // Re-create the render target view
     }
 
-    static void CreateRenderTargetInternal() {
-        if (!g_pSwapChain || !g_pd3dDevice) return;
+    /**
+     * CreateRenderTargetInternal - Internal helper to create the main render target view.
+	 */
+    static void CreateRenderTargetInternal()
+    {
+        if (!g_pSwapChain || !g_pd3dDevice)
+            return;
 
         ID3D11Texture2D* pBackBuffer = nullptr;
         HRESULT hr = g_pSwapChain->GetBuffer(0, IID_PPV_ARGS(&pBackBuffer));
-        if (SUCCEEDED(hr)) {
+        if (SUCCEEDED(hr))
+        {
             hr = g_pd3dDevice->CreateRenderTargetView(pBackBuffer, nullptr, &g_mainRenderTargetView);
             pBackBuffer->Release(); // RTV holds its own reference
-            if (FAILED(hr)) {
+            if (FAILED(hr))
+            {
                 fprintf(stderr, "Error creating render target view: 0x%lx\n", hr);
                 g_mainRenderTargetView = nullptr;
             }
         }
-        else {
+        else
             fprintf(stderr, "Error getting swap chain buffer: 0x%lx\n", hr);
-        }
     }
 
-    static void CleanupRenderTargetInternal() {
-        if (g_mainRenderTargetView) {
+    /**
+	 * CleanupRenderTargetInternal - Internal helper to clean up the main render target view.
+     */
+    static void CleanupRenderTargetInternal()
+    {
+        if (g_mainRenderTargetView)
+        {
             g_mainRenderTargetView->Release();
             g_mainRenderTargetView = nullptr;
         }
         // Ensure the context doesn't have the RTV bound anymore
-        if (g_pd3dDeviceContext) {
+        if (g_pd3dDeviceContext)
+        {
             ID3D11RenderTargetView* nullRTV = nullptr;
             g_pd3dDeviceContext->OMSetRenderTargets(1, &nullRTV, nullptr);
             g_pd3dDeviceContext->Flush(); // Ensure command execution
@@ -140,9 +172,24 @@ namespace D3DManager {
     }
 
     // --- Getters ---
-    ID3D11Device* GetDevice() { return g_pd3dDevice; }
-    ID3D11DeviceContext* GetDeviceContext() { return g_pd3dDeviceContext; }
-    IDXGISwapChain* GetSwapChain() { return g_pSwapChain; }
-    ID3D11RenderTargetView* GetMainRenderTargetView() { return g_mainRenderTargetView; }
+    ID3D11Device* GetDevice()
+    {
+        return (g_pd3dDevice);
+    }
+
+    ID3D11DeviceContext* GetDeviceContext()
+    {
+        return (g_pd3dDeviceContext);
+    }
+
+    IDXGISwapChain* GetSwapChain()
+    {
+        return (g_pSwapChain);
+    }
+
+    ID3D11RenderTargetView* GetMainRenderTargetView()
+    {
+        return (g_mainRenderTargetView);
+    }
 
 } // namespace D3DManager
