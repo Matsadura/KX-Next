@@ -27,7 +27,7 @@ Hack::Hack(std::function<void(const std::string&)> statusCallback)
 }
 
 Hack::~Hack() {
-    reportStatus("INFO: Shutting down KX Trainer.");
+    reportStatus("INFO: Shutting down KX Next.");
     // Ensure detachment if Initialize() failed partially or wasn't called
     if (m_memoryManager.IsAttached()) {
         m_memoryManager.Detach();
@@ -47,7 +47,7 @@ void Hack::initializeOffsets()
 }
 
 bool Hack::Initialize() {
-    reportStatus("INFO: Starting KX Trainer initialization...");
+    reportStatus("INFO: Starting KX Next initialization...");
     try {
         findProcess();
         performBaseScan();

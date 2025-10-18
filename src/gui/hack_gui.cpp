@@ -1,11 +1,11 @@
-#include "hack_gui.h"
-#include "hack.h"
-#include "constants.h"
-#include "status_ui.h"
-#include "key_utils.h"
-
-#include "imgui/imgui.h"
-#include "imgui/imgui_internal.h"
+#include "../gui/hack_gui.h"
+#include "../hack/hack.h"
+#include "../hack/constants.h"
+#include "../gui/status_ui.h"
+#include "../utils/key_utils.h"
+#include "../utils/hotkey_definitions.h"
+#include "../libs/imgui/imgui.h"
+#include "../libs/imgui/imgui_internal.h"
 
 #include <windows.h>
 #include <shellapi.h>
@@ -19,7 +19,7 @@
  * @m_hack: Reference to the Hack instance for performing actions.
  * @m_rebinding_hotkey_id: ID of the hotkey currently being rebound, or NONE.
  * 
- * description - This class manages the graphical user interface for the KX Trainer hack,
+ * description - This class manages the graphical user interface for the KX Next hack,
  * allowing users to configure hotkeys, toggle features, and view logs.
  * It interacts with the Hack class to perform actions in the game.
  */
@@ -353,7 +353,7 @@ void HackGUI::RenderInfoSection()
 {
     if (ImGui::CollapsingHeader("Info"))
     {
-        ImGui::Text("KX Trainer by Krixx");
+        ImGui::Text("KX Next by Matsadura, Originally by Krixx");
         ImGui::Text("Consider the paid version at kxtools.xyz!");
         ImGui::Separator();
 
@@ -361,7 +361,7 @@ void HackGUI::RenderInfoSection()
         ImGui::Text("GitHub:");
         ImGui::SameLine();
         if (ImGui::Button("Repository"))
-            ShellExecuteA(NULL, "open", "https://github.com/Krixx1337/KX-Trainer-Free", NULL, NULL, SW_SHOWNORMAL);
+            ShellExecuteA(NULL, "open", "https://github.com/Matsadura/KX-Next", NULL, NULL, SW_SHOWNORMAL);
 
         // kxtools.xyz Link
         ImGui::Text("Website:");
@@ -390,7 +390,7 @@ bool HackGUI::renderUI()
     ImGui::SetNextWindowSizeConstraints(ImVec2(min_window_width, 0.0f), ImVec2(FLT_MAX, FLT_MAX));
 
     ImGuiWindowFlags window_flags = 0;
-    ImGui::Begin("KX Trainer", &main_window_open, window_flags);
+    ImGui::Begin("KX Next", &main_window_open, window_flags);
 
     if (!main_window_open)
         exit_requested = true; // Request exit if user closes window

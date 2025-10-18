@@ -1,7 +1,7 @@
 #define NOMINMAX
 
 #include "process_memory_manager.h"
-#include "status_ui.h" // For logging - TODO: Replace with dedicated logger interface
+#include "../gui/status_ui.h" // For logging - TODO: Replace with dedicated logger interface
 #include <stdexcept>
 #include <vector>
 #include <sstream>

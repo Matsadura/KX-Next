@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 #include <functional>
-#include "hotkey_definitions.h"
+#include "../utils/hotkey_definitions.h"
 
 class Hack;
 

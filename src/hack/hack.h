@@ -1,6 +1,6 @@
 #pragma once
 
-#include "process_memory_manager.h"
+#include "../managers/process_memory_manager.h"
 #include <Windows.h>
 #include <cstdint>
 #include <functional>

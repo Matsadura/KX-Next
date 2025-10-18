@@ -1,9 +1,9 @@
-﻿#include "hack.h"
-#include "hack_gui.h"
+﻿#include "../hack/hack.h"
+#include "../gui/hack_gui.h"
 #include "kx_status.h"
-#include "d3d_manager.h"
-#include "status_ui.h"
-#include "gui_style.h"
+#include "../managers/d3d_manager.h"
+#include "../gui/status_ui.h"
+#include "../gui/gui_style.h"
 
 #include <windows.h>
 #include <tchar.h>
@@ -13,9 +13,9 @@
 #include <chrono>
 #include <exception>
 
-#include "imgui/imgui.h"
-#include "imgui/imgui_impl_win32.h"
-#include "imgui/imgui_impl_dx11.h"
+#include "../libs/imgui/imgui.h"
+#include "../libs/imgui/imgui_impl_win32.h"
+#include "../libs/imgui/imgui_impl_dx11.h"
 
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -79,10 +79,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     }
 
     // Window Setup
-    const TCHAR* CLASS_NAME = _T("KXTrainerHostWindowClass");
-    const TCHAR* WINDOW_TITLE_LOADING = _T("KX Trainer - Loading...");
-    const TCHAR* WINDOW_TITLE_ERROR = _T("KX Trainer - Error");
-    const TCHAR* WINDOW_TITLE_HIDDEN = _T("KX Trainer (Hidden Host)");
+    const TCHAR* CLASS_NAME = _T("KXNextHostWindowClass");
+    const TCHAR* WINDOW_TITLE_LOADING = _T("KX Next - Loading...");
+    const TCHAR* WINDOW_TITLE_ERROR = _T("KX Next - Error");
+    const TCHAR* WINDOW_TITLE_HIDDEN = _T("KX Next (Hidden Host)");
 
     WNDCLASSEX wc = { sizeof(WNDCLASSEX), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandle(NULL), NULL, NULL, NULL, NULL, CLASS_NAME, NULL };
     if (!::RegisterClassEx(&wc))

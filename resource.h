@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
-// Used by KX-Trainer-Free.rc
+// Used by KX-Next.rc
 //
 #define IDI_ICON1                       101
 

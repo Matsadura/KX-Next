@@ -14,9 +14,9 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <ProjectGuid>{8AD3AA0A-56D4-447B-9879-29C359DBF2C9}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>KXTrainerFree</RootNamespace>
+    <RootNamespace>KXNext</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>KX-Trainer-Free</ProjectName>
+    <ProjectName>KX-Next</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -60,17 +60,17 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)curl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\src\libs\curl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)curl\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)\src\libs\curl\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>libcurl.dll.a;d3d11.lib;dxgi.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y "$(ProjectDir)curl\libcurl-x64.dll" "$(TargetDir)"</Command>
+      <Command>xcopy /y "$(ProjectDir)\src\libs\curl\libcurl-x64.dll" "$(TargetDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -84,7 +84,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)curl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\src\libs\curl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -93,59 +93,59 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>DebugFastLink</GenerateDebugInformation>
       <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
-      <AdditionalLibraryDirectories>$(ProjectDir)curl\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)\src\libs\curl\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>libcurl.dll.a;d3d11.lib;dxgi.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y "$(ProjectDir)curl\libcurl-x64.dll" "$(TargetDir)"</Command>
+      <Command>xcopy /y "$(ProjectDir)\src\libs\curl\libcurl-x64.dll" "$(TargetDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="d3d_manager.cpp" />
-    <ClCompile Include="gui_style.cpp" />
-    <ClCompile Include="key_utils.cpp" />
-    <ClCompile Include="process_memory_manager.cpp" />
-    <ClCompile Include="hack_gui.cpp" />
-    <ClCompile Include="http_client.cpp" />
-    <ClCompile Include="imgui\imgui.cpp" />
-    <ClCompile Include="imgui\imgui_draw.cpp" />
-    <ClCompile Include="imgui\imgui_impl_dx11.cpp" />
-    <ClCompile Include="imgui\imgui_impl_win32.cpp" />
-    <ClCompile Include="imgui\imgui_tables.cpp" />
-    <ClCompile Include="imgui\imgui_widgets.cpp" />
-    <ClCompile Include="kx_status.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="hack.cpp" />
-    <ClCompile Include="status_ui.cpp" />
+    <ClCompile Include="src\managers\d3d_manager.cpp" />
+    <ClCompile Include="src\gui\gui_style.cpp" />
+    <ClCompile Include="src\utils\key_utils.cpp" />
+    <ClCompile Include="src\managers\process_memory_manager.cpp" />
+    <ClCompile Include="src\gui\hack_gui.cpp" />
+    <ClCompile Include="src\network\http_client.cpp" />
+    <ClCompile Include="src\libs\imgui\imgui.cpp" />
+    <ClCompile Include="src\libs\imgui\imgui_draw.cpp" />
+    <ClCompile Include="src\libs\imgui\imgui_impl_dx11.cpp" />
+    <ClCompile Include="src\libs\imgui\imgui_impl_win32.cpp" />
+    <ClCompile Include="src\libs\imgui\imgui_tables.cpp" />
+    <ClCompile Include="src\libs\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="src\core\kx_status.cpp" />
+    <ClCompile Include="src\core\main.cpp" />
+    <ClCompile Include="src\hack\hack.cpp" />
+    <ClCompile Include="src\gui\status_ui.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="constants.h" />
-    <ClInclude Include="d3d_manager.h" />
-    <ClInclude Include="gui_style.h" />
-    <ClInclude Include="hack_gui.h" />
-    <ClInclude Include="hotkey_definitions.h" />
-    <ClInclude Include="http_client.h" />
-    <ClInclude Include="hack.h" />
-    <ClInclude Include="imgui\imconfig.h" />
-    <ClInclude Include="imgui\imgui.h" />
-    <ClInclude Include="imgui\imgui_impl_dx11.h" />
-    <ClInclude Include="imgui\imgui_impl_win32.h" />
-    <ClInclude Include="imgui\imgui_internal.h" />
-    <ClInclude Include="imgui\imstb_rectpack.h" />
-    <ClInclude Include="imgui\imstb_textedit.h" />
-    <ClInclude Include="imgui\imstb_truetype.h" />
-    <ClInclude Include="key_utils.h" />
-    <ClInclude Include="kx_status.h" />
-    <ClInclude Include="nlohmann\json.hpp" />
-    <ClInclude Include="process_memory_manager.h" />
+    <ClInclude Include="src\hack\constants.h" />
+    <ClInclude Include="src\managers\d3d_manager.h" />
+    <ClInclude Include="src\gui\gui_style.h" />
+    <ClInclude Include="src\gui\hack_gui.h" />
+    <ClInclude Include="src\utils\hotkey_definitions.h" />
+    <ClInclude Include="src\network\http_client.h" />
+    <ClInclude Include="src\hack\hack.h" />
+    <ClInclude Include="src\libs\imgui\imconfig.h" />
+    <ClInclude Include="src\libs\imgui\imgui.h" />
+    <ClInclude Include="src\libs\imgui\imgui_impl_dx11.h" />
+    <ClInclude Include="src\libs\imgui\imgui_impl_win32.h" />
+    <ClInclude Include="src\libs\imgui\imgui_internal.h" />
+    <ClInclude Include="src\libs\imgui\imstb_rectpack.h" />
+    <ClInclude Include="src\libs\imgui\imstb_textedit.h" />
+    <ClInclude Include="src\libs\imgui\imstb_truetype.h" />
+    <ClInclude Include="src\utils\key_utils.h" />
+    <ClInclude Include="src\core\kx_status.h" />
+    <ClInclude Include="src\libs\nlohmann\json.hpp" />
+    <ClInclude Include="src\managers\process_memory_manager.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="status_ui.h" />
+    <ClInclude Include="src\gui\status_ui.h" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="KX-Trainer-Free.rc" />
+    <ResourceCompile Include="KX-Next.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\images\app_icon.ico" />
+    <Image Include="images\app_icon.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,8 +1,8 @@
 #include "kx_status.h"
-#include "nlohmann/json.hpp"
-#include "http_client.h"
-#include "constants.h"
-#include "status_ui.h"
+#include "../libs/nlohmann/json.hpp"
+#include "../network/http_client.h"
+#include "../hack/constants.h"
+#include "../gui/status_ui.h"
 #include <windows.h>
 #include <string>
 

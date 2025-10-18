@@ -1,7 +1,7 @@
 #define NOMINMAX
 
 #include "gui_style.h"
-#include "imgui/imgui.h"
+#include "../libs/imgui/imgui.h"
 #include <algorithm> // Required for std::min/max
 
 // Headers needed for font loading

@@ -1,5 +1,5 @@
 #include "status_ui.h"
-#include "imgui/imgui.h"
+#include "../libs/imgui/imgui.h"
 
 namespace StatusUI {
 
@@ -73,7 +73,7 @@ namespace StatusUI {
         }
         else {
             // --- Loading Display ---
-            const char* loadingTitle = "Initializing KX Trainer...";
+            const char* loadingTitle = "Initializing KX Next...";
             float titleWidth = ImGui::CalcTextSize(loadingTitle).x;
             ImGui::SetCursorPosX((contentRegionAvail.x - titleWidth) * 0.5f);
             ImGui::TextUnformatted(loadingTitle);
