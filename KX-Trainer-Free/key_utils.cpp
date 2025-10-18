@@ -4,9 +4,14 @@
 #include <map>
 #include <cstdio> // For snprintf
 
-// Returns a human-readable string representation of a Windows virtual key code.
+/**
+ * GetKeyName - Converts a Windows virtual key code to a human-readable string.
+ * @vk_code: The virtual key code to convert.
+ * Returns: A pointer to a string containing the key name.
+ */
 const char* GetKeyName(int vk_code) {
-    if (vk_code == 0) { return "None"; }
+    if (vk_code == 0)
+        return ("None");
 
     // Static map for efficiency and lookup
     static std::map<int, const char*> keyNames = {
@@ -36,12 +41,11 @@ const char* GetKeyName(int vk_code) {
     };
 
     auto it = keyNames.find(vk_code);
-    if (it != keyNames.end()) {
-        return it->second;
-    }
+    if (it != keyNames.end())
+        return (it->second);
 
     // Fallback for unknown keys
     static char unknownKey[32];
     snprintf(unknownKey, sizeof(unknownKey), "VK 0x%02X", vk_code);
-    return unknownKey;
+    return (unknownKey);
 }

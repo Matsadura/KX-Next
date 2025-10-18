@@ -2,6 +2,9 @@
 
 #include <string>
 
+/**
+ * HttpClient - Simple HTTP client using libcurl for GET requests.
+ */
 class HttpClient
 {
 public:

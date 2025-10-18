@@ -10,26 +10,42 @@
 #include <ShlObj.h>       // For SHGetFolderPath
 #pragma comment(lib, "Shell32.lib") // Link Shell32.lib
 
-namespace GUIStyle {
-
-    // Helper function to convert RGB to ImVec4 (alpha defaults to 1.0f)
-    inline ImVec4 RgbToVec4(int r, int g, int b) {
-        return ImVec4(static_cast<float>(r) / 255.0f, static_cast<float>(g) / 255.0f, static_cast<float>(b) / 255.0f, 1.0f);
+/**
+ * GUIStyle namespace
+ */
+namespace GUIStyle
+{
+    /**
+	 * RgbToVec4 - Converts RGB values (0-255) to ImVec4 with alpha = 1.0f.
+	 * @r: Red component (0-255)
+	 * @g: Green component (0-255)
+	 * @b: Blue component (0-255)
+	 * Returns: ImVec4 with normalized RGB and alpha = 1.0f
+	 */
+    inline ImVec4 RgbToVec4(int r, int g, int b)
+    {
+        return (ImVec4(static_cast<float>(r) / 255.0f, static_cast<float>(g) / 255.0f, static_cast<float>(b) / 255.0f, 1.0f));
     }
 
-    // Gets the system Fonts directory path
-    std::string GetSystemFontsPath() {
+    /**
+	 * GetSystemFontsPath - Retrieves the system Fonts directory path on Windows.
+	 * Returns: System Fonts directory path as a string
+	 */
+    std::string GetSystemFontsPath()
+    {
         char fontsPath[MAX_PATH];
-        if (SUCCEEDED(SHGetFolderPathA(NULL, CSIDL_FONTS, NULL, 0, fontsPath))) {
-            return std::string(fontsPath);
-        }
-        return ""; // Return empty string on failure
+        if (SUCCEEDED(SHGetFolderPathA(NULL, CSIDL_FONTS, NULL, 0, fontsPath)))
+            return (std::string(fontsPath));
+        return (""); // Return empty string on failure
     }
 
-    // Loads the primary application font (Bahnschrift).
-    // Should be called after ImGui::CreateContext() and before renderer init.
-    // Returns true if custom font was loaded successfully, false otherwise.
-    bool LoadAppFont(float fontSize) {
+    /**
+	 * LoadAppFont - Loads the primary application font (Bahnschrift).
+     * @fontSize: Size of the font to load
+	 * Returns: True if the font was loaded successfully, false otherwise
+	 */
+    bool LoadAppFont(float fontSize)
+    {
         ImGuiIO& io = ImGui::GetIO();
         bool success = false;
 
@@ -37,30 +53,34 @@ namespace GUIStyle {
         io.Fonts->AddFontDefault();
 
         std::string fontsDir = GetSystemFontsPath();
-        if (!fontsDir.empty()) {
+        if (!fontsDir.empty())
+        {
             std::string fontPath = fontsDir + "\\bahnschrift.ttf"; // Use Bahnschrift
 
             ImFont* customFont = io.Fonts->AddFontFromFileTTF(fontPath.c_str(), fontSize);
 
-            if (customFont) {
+            if (customFont)
+            {
                 // Set the loaded font as the default for ImGui to use.
                 io.FontDefault = customFont;
                 success = true;
             }
-            else {
+            else
                 // Log or notify if Bahnschrift isn't found (it's not on all Windows versions)
                 MessageBoxA(NULL, ("Failed to load Bahnschrift font from: " + fontPath + ". Using default.").c_str(), "Font Warning", MB_OK | MB_ICONWARNING);
                 // Fallback to default font is already handled by AddFontDefault()
-            }
         }
-        else {
+        else
             MessageBoxA(NULL, "Could not determine System Fonts directory path!", "Font Error", MB_OK | MB_ICONERROR);
             // Fallback handled
-        }
-        return success;
+        return (success);
     }
 
-    void ApplyCustomStyle() {
+    /**
+     * ApplyCustomStyle - Applies a custom visual style and color theme to ImGui.
+	 */
+    void ApplyCustomStyle()
+    {
         ImGuiStyle& style = ImGui::GetStyle();
         ImVec4* colors = style.Colors;
 
@@ -168,12 +188,12 @@ namespace GUIStyle {
 
         // Ensure viewport windows are opaque and non-rounded if enabled
         ImGuiIO& io = ImGui::GetIO();
-        if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+        if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+        {
             style.WindowRounding = 0.0f;
             style.ChildRounding = 0.0f; // Also apply to child windows with viewports
             style.PopupRounding = 0.0f; // Also apply to popups with viewports
             style.Colors[ImGuiCol_WindowBg].w = 1.0f;
         }
     }
-
 } // namespace GUIStyle
