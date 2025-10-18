@@ -33,52 +33,55 @@ HackGUI::HackGUI(Hack& hack) : m_hack(hack), m_rebinding_hotkey_id(HotkeyID::NON
 }
 
 // Renders label, key name, and Change button for a single hotkey configuration
-void HackGUI::RenderHotkeyControl(HotkeyInfo& hotkey) {
+void HackGUI::RenderHotkeyControl(HotkeyInfo& hotkey)
+{
     ImGui::Text("%s:", hotkey.name);
     ImGui::SameLine(150.0f); // Alignment
 
-    if (m_rebinding_hotkey_id == hotkey.id) {
+    if (m_rebinding_hotkey_id == hotkey.id)
         ImGui::TextDisabled("<Press any key>");
-    } else {
+    else
+    {
         // Display key name, adding '*' for hold actions
         const char* baseKeyName = GetKeyName(hotkey.currentKeyCode);
-        if (hotkey.triggerType == HotkeyTriggerType::ON_HOLD) {
+        if (hotkey.triggerType == HotkeyTriggerType::ON_HOLD)
+        {
             std::string keyNameWithIndicator = std::string(baseKeyName) + "*";
             ImGui::Text("%s", keyNameWithIndicator.c_str());
-            if (ImGui::IsItemHovered()) {
+            if (ImGui::IsItemHovered())
                 ImGui::SetTooltip("Hold");
-            }
-        } else {
+        } 
+        else
             ImGui::Text("%s", baseKeyName);
-        }
         ImGui::SameLine(280.0f); // Alignment
 
         // Create a unique ID for the button using the hotkey name
         std::string button_label = "Change##" + std::string(hotkey.name);
-        if (ImGui::Button(button_label.c_str())) {
+        if (ImGui::Button(button_label.c_str()))
             m_rebinding_hotkey_id = hotkey.id; // Set the ID of the hotkey being rebound
-        }
     }
 }
 
 // Renders the "Always on Top" checkbox and applies the setting
-void HackGUI::RenderAlwaysOnTop() {
+void HackGUI::RenderAlwaysOnTop()
+{
     static bool always_on_top_checkbox = false;
     static bool current_window_is_topmost = false;
     HWND current_window_hwnd = nullptr;
 
     ImGuiWindow* current_imgui_win = ImGui::GetCurrentWindowRead();
-    if (current_imgui_win && current_imgui_win->Viewport) {
+    if (current_imgui_win && current_imgui_win->Viewport)
         current_window_hwnd = (HWND)current_imgui_win->Viewport->PlatformHandleRaw;
-    }
 
     ImGui::Checkbox("Always on Top", &always_on_top_checkbox);
 
-    if (current_window_hwnd) {
+    if (current_window_hwnd)
+    {
         HWND insert_after = always_on_top_checkbox ? HWND_TOPMOST : HWND_NOTOPMOST;
         bool should_be_topmost = always_on_top_checkbox;
 
-        if (should_be_topmost != current_window_is_topmost) {
+        if (should_be_topmost != current_window_is_topmost)
+        {
             ::SetWindowPos(current_window_hwnd, insert_after, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
             current_window_is_topmost = should_be_topmost;
         }
@@ -88,25 +91,25 @@ void HackGUI::RenderAlwaysOnTop() {
 }
 
 // Checks registered hotkeys and calls corresponding actions
-void HackGUI::HandleHotkeys() {
+void HackGUI::HandleHotkeys()
+{
     // Don't process hotkeys if currently rebinding one
-    if (m_rebinding_hotkey_id != HotkeyID::NONE) {
+    if (m_rebinding_hotkey_id != HotkeyID::NONE)
         return;
-    }
 
-    for (const auto& hotkey : m_hotkeys) {
-        if (hotkey.currentKeyCode == 0 || !hotkey.action) { // Skip unbound or unassigned actions
+    for (const auto& hotkey : m_hotkeys)
+    {
+        if (hotkey.currentKeyCode == 0 || !hotkey.action) // Skip unbound or unassigned actions
             continue;
-        }
 
         SHORT keyState = GetAsyncKeyState(hotkey.currentKeyCode);
 
-        switch (hotkey.triggerType) {
+        switch (hotkey.triggerType)
+        {
             case HotkeyTriggerType::ON_PRESS:
                 // Check the least significant bit (1 means pressed *since the last call*)
-                if (keyState & 1) {
+                if (keyState & 1)
                     hotkey.action(m_hack, true); // Pass true for pressed state
-                }
                 break;
 
             case HotkeyTriggerType::ON_HOLD:
@@ -119,17 +122,20 @@ void HackGUI::HandleHotkeys() {
 }
 
 // Handles the logic when the user is actively rebinding a hotkey
-void HackGUI::HandleHotkeyRebinding() {
-    if (m_rebinding_hotkey_id == HotkeyID::NONE) return;
+void HackGUI::HandleHotkeyRebinding()
+{
+    if (m_rebinding_hotkey_id == HotkeyID::NONE)
+        return;
 
     int captured_vk = -1; // -1 means no key captured yet
 
     // Check special keys first
-    if (GetAsyncKeyState(VK_ESCAPE) & 1) {
+    if (GetAsyncKeyState(VK_ESCAPE) & 1)
         captured_vk = VK_ESCAPE; // Special value to indicate cancellation
-    } else if ((GetAsyncKeyState(VK_DELETE) & 1) || (GetAsyncKeyState(VK_BACK) & 1)) {
+    else if ((GetAsyncKeyState(VK_DELETE) & 1) || (GetAsyncKeyState(VK_BACK) & 1))
         captured_vk = 0; // 0 means unbind
-    } else {
+    else
+    {
         // Iterate through common key codes to find the first pressed key
         for (int vk = VK_MBUTTON; vk < VK_OEM_CLEAR; ++vk) {
             // Skip keys that interfere, are unsuitable, or handled above
@@ -137,11 +143,10 @@ void HackGUI::HandleHotkeyRebinding() {
                 vk == VK_LBUTTON || vk == VK_RBUTTON || // Avoid UI clicks binding easily
                 vk == VK_SHIFT || vk == VK_CONTROL || vk == VK_MENU || // Prefer specific L/R versions if needed, though GetKeyName handles these
                 vk == VK_CAPITAL || vk == VK_NUMLOCK || vk == VK_SCROLL) // State keys are poor choices
-            {
                 continue;
-            }
             // Check if key was pressed *since the last call*
-            if (GetAsyncKeyState(vk) & 1) {
+            if (GetAsyncKeyState(vk) & 1)
+            {
                 captured_vk = vk;
                 break; // Found the first pressed key
             }
@@ -149,11 +154,15 @@ void HackGUI::HandleHotkeyRebinding() {
     }
 
     // If a key was captured or an action key (Esc/Del/Back) was pressed
-    if (captured_vk != -1) {
-        if (captured_vk != VK_ESCAPE) { // If not cancelling
+    if (captured_vk != -1)
+    {
+        if (captured_vk != VK_ESCAPE)
+        { // If not cancelling
             // Find the hotkey being rebound in the vector
-            for (auto& hotkey : m_hotkeys) {
-                if (hotkey.id == m_rebinding_hotkey_id) {
+            for (auto& hotkey : m_hotkeys)
+            {
+                if (hotkey.id == m_rebinding_hotkey_id)
+                {
                     hotkey.currentKeyCode = captured_vk; // Assign the captured key (or 0 for unbind)
                     // TODO: Save updated hotkeys to config file here
                     break; // Found and updated
@@ -166,54 +175,71 @@ void HackGUI::HandleHotkeyRebinding() {
 }
 
 // Renders the collapsible section with toggle checkboxes
-void HackGUI::RenderTogglesSection() {
-    if (ImGui::CollapsingHeader("Toggles", ImGuiTreeNodeFlags_DefaultOpen)) {
+void HackGUI::RenderTogglesSection()
+{
+    if (ImGui::CollapsingHeader("Toggles", ImGuiTreeNodeFlags_DefaultOpen))
+    {
         bool tempState = false; // Temporary variable for ImGui interaction
 
         tempState = m_hack.IsFogEnabled();
-        if (ImGui::Checkbox("No Fog", &tempState)) { m_hack.toggleFog(tempState); }
+        if (ImGui::Checkbox("No Fog", &tempState))
+            m_hack.toggleFog(tempState);
 
         tempState = m_hack.IsObjectClippingEnabled();
-        if (ImGui::Checkbox("Object Clipping", &tempState)) { m_hack.toggleObjectClipping(tempState); }
+        if (ImGui::Checkbox("Object Clipping", &tempState))
+            m_hack.toggleObjectClipping(tempState);
 
         tempState = m_hack.IsFullStrafeEnabled();
-        if (ImGui::Checkbox("Full Strafe", &tempState)) { m_hack.toggleFullStrafe(tempState); }
+        if (ImGui::Checkbox("Full Strafe", &tempState))
+            m_hack.toggleFullStrafe(tempState);
 
         // Sprint checkbox controls the user preference flag
         ImGui::Checkbox("Sprint", &m_sprintEnabled);
 
         tempState = m_hack.IsInvisibilityEnabled();
-        if (ImGui::Checkbox("Invisibility (Mobs)", &tempState)) { m_hack.toggleInvisibility(tempState); }
+        if (ImGui::Checkbox("Invisibility (Mobs)", &tempState))
+            m_hack.toggleInvisibility(tempState);
 
         tempState = m_hack.IsWallClimbEnabled();
-        if (ImGui::Checkbox("Wall Climb", &tempState)) { m_hack.toggleWallClimb(tempState); }
+        if (ImGui::Checkbox("Wall Climb", &tempState))
+            m_hack.toggleWallClimb(tempState);
 
         tempState = m_hack.IsClippingEnabled();
-        if (ImGui::Checkbox("Clipping", &tempState)) { m_hack.toggleClipping(tempState); }
+        if (ImGui::Checkbox("Clipping", &tempState))
+            m_hack.toggleClipping(tempState);
 
         ImGui::Spacing();
     }
 }
 
 // Renders the collapsible section with action buttons
-void HackGUI::RenderActionsSection() {
-    if (ImGui::CollapsingHeader("Actions", ImGuiTreeNodeFlags_DefaultOpen)) {
+void HackGUI::RenderActionsSection()
+{
+    if (ImGui::CollapsingHeader("Actions", ImGuiTreeNodeFlags_DefaultOpen))
+    {
         float button_width = ImGui::GetContentRegionAvail().x * 0.48f; // Approx half width
-        if (ImGui::Button("Save Position", ImVec2(button_width, 0))) { m_hack.savePosition(); }
+        if (ImGui::Button("Save Position", ImVec2(button_width, 0)))
+            m_hack.savePosition();
         ImGui::SameLine();
-        if (ImGui::Button("Load Position", ImVec2(-1.0f, 0))) { m_hack.loadPosition(); } // Fill remaining
+        if (ImGui::Button("Load Position", ImVec2(-1.0f, 0)))
+            m_hack.loadPosition(); // Fill remaining
         ImGui::Spacing();
     }
 }
 
 // Renders the collapsible section for configuring hotkeys
-void HackGUI::RenderHotkeysSection() {
-    if (ImGui::CollapsingHeader("Hotkeys")) {
+void HackGUI::RenderHotkeysSection()
+{
+    if (ImGui::CollapsingHeader("Hotkeys"))
+    {
         // Display rebinding prompt if active
-        if (m_rebinding_hotkey_id != HotkeyID::NONE) {
+        if (m_rebinding_hotkey_id != HotkeyID::NONE)
+        {
             const char* rebinding_name = "Unknown"; // Fallback
-            for(const auto& hk : m_hotkeys) {
-                if (hk.id == m_rebinding_hotkey_id) {
+            for (const auto& hk : m_hotkeys)
+            {
+                if (hk.id == m_rebinding_hotkey_id)
+                {
                     rebinding_name = hk.name;
                     break;
                 }
@@ -224,18 +250,19 @@ void HackGUI::RenderHotkeysSection() {
 
         // Dim controls while rebinding
         bool disable_controls = (m_rebinding_hotkey_id != HotkeyID::NONE);
-        if (disable_controls) {
+        if (disable_controls)
+        {
             ImGui::PushItemFlag(ImGuiItemFlags_Disabled, true);
             ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5f);
         }
 
         // Iterate through hotkeys and render controls
-        for (auto& hotkey : m_hotkeys) {
+        for (auto& hotkey : m_hotkeys)
             RenderHotkeyControl(hotkey);
-        }
 
 
-        if (disable_controls) {
+        if (disable_controls) 
+        {
             ImGui::PopItemFlag();
             ImGui::PopStyleVar();
         }
@@ -243,17 +270,17 @@ void HackGUI::RenderHotkeysSection() {
         ImGui::Spacing();
 
         // Buttons for defaults and unbinding
-        if (ImGui::Button("Apply Recommended Defaults")) {
-            for (auto& hotkey : m_hotkeys) {
+        if (ImGui::Button("Apply Recommended Defaults"))
+        {
+            for (auto& hotkey : m_hotkeys)
                 hotkey.currentKeyCode = hotkey.defaultKeyCode;
-            }
             // TODO: Save updated hotkeys to config file
         }
         ImGui::SameLine();
-        if (ImGui::Button("Unbind All")) {
-            for (auto& hotkey : m_hotkeys) {
+        if (ImGui::Button("Unbind All"))
+        {
+            for (auto& hotkey : m_hotkeys)
                 hotkey.currentKeyCode = 0; // 0 represents unbound
-            }
             // TODO: Save updated hotkeys to config file
         }
         ImGui::Spacing();
@@ -261,15 +288,18 @@ void HackGUI::RenderHotkeysSection() {
 }
 
 // Renders the collapsible log section
-void HackGUI::RenderLogSection() {
+void HackGUI::RenderLogSection()
+{
     // Assumes StatusUI is still used for logging until Step 1 is done.
     // If Step 1 (ILogger) was done, this would pull from the logger instance.
-    if (ImGui::CollapsingHeader("Log", ImGuiTreeNodeFlags_None)) { // Start collapsed
+    if (ImGui::CollapsingHeader("Log", ImGuiTreeNodeFlags_None))
+    { // Start collapsed
         ImGui::BeginChild("LogScrollingRegion", ImVec2(0, 100), true, ImGuiWindowFlags_HorizontalScrollbar);
         {
             std::vector<std::string> current_messages = StatusUI::GetMessages(); // <-- Keep using StatusUI for now
 
-            for (const auto& msg : current_messages) {
+            for (const auto& msg : current_messages)
+            {
                 ImVec4 color = ImGui::GetStyleColorVec4(ImGuiCol_Text); // Default
                 if (msg.rfind("ERROR:", 0) == 0) color = ImVec4(1.0f, 0.4f, 0.4f, 1.0f); // Red
                 else if (msg.rfind("WARN:", 0) == 0) color = ImVec4(1.0f, 1.0f, 0.4f, 1.0f); // Yellow
@@ -277,22 +307,22 @@ void HackGUI::RenderLogSection() {
                 ImGui::TextColored(color, "%s", msg.c_str());
             }
             // Auto-scroll
-            if (ImGui::GetScrollY() >= ImGui::GetScrollMaxY() - ImGui::GetTextLineHeight() * 2) {
+            if (ImGui::GetScrollY() >= ImGui::GetScrollMaxY() - ImGui::GetTextLineHeight() * 2)
                 ImGui::SetScrollHereY(1.0f);
-            }
         }
         ImGui::EndChild();
 
-        if (ImGui::Button("Clear Log")) {
+        if (ImGui::Button("Clear Log"))
             StatusUI::ClearMessages(); // <-- Keep using StatusUI for now
-        }
         ImGui::Spacing();
     }
 }
 
 // Renders the collapsible info/about section
-void HackGUI::RenderInfoSection() {
-    if (ImGui::CollapsingHeader("Info")) {
+void HackGUI::RenderInfoSection()
+{
+    if (ImGui::CollapsingHeader("Info"))
+    {
         ImGui::Text("KX Trainer by Krixx");
         ImGui::Text("Consider the paid version at kxtools.xyz!");
         ImGui::Separator();
@@ -300,23 +330,20 @@ void HackGUI::RenderInfoSection() {
         // GitHub Link
         ImGui::Text("GitHub:");
         ImGui::SameLine();
-        if (ImGui::Button("Repository")) {
+        if (ImGui::Button("Repository"))
             ShellExecuteA(NULL, "open", "https://github.com/Krixx1337/KX-Trainer-Free", NULL, NULL, SW_SHOWNORMAL);
-        }
 
         // kxtools.xyz Link
         ImGui::Text("Website:");
         ImGui::SameLine();
-        if (ImGui::Button("kxtools.xyz")) {
+        if (ImGui::Button("kxtools.xyz"))
              ShellExecuteA(NULL, "open", "https://kxtools.xyz", NULL, NULL, SW_SHOWNORMAL);
-        }
 
         // Discord Link
         ImGui::Text("Discord:");
         ImGui::SameLine();
-        if (ImGui::Button("Join Server")) {
+        if (ImGui::Button("Join Server"))
              ShellExecuteA(NULL, "open", "https://discord.gg/z92rnB4kHm", NULL, NULL, SW_SHOWNORMAL);
-        }
     }
 }
 
@@ -332,9 +359,8 @@ bool HackGUI::renderUI()
     ImGuiWindowFlags window_flags = 0;
     ImGui::Begin("KX Trainer", &main_window_open, window_flags);
 
-    if (!main_window_open) {
+    if (!main_window_open)
         exit_requested = true; // Request exit if user closes window
-    }
 
     RenderAlwaysOnTop();
 
