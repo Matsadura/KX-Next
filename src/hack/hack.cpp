@@ -601,9 +601,13 @@ void Hack::updateAntiAfk()
     auto elapsed = std::chrono::duration_cast<std::chrono::minutes>(now - m_lastAntiAfkTick);
     if (elapsed.count() >= 4)
     {
-        // Send 'Q' then 'D' to simulate small movement inputs
-        m_memoryManager.PostVirtualKey('Q');
-        m_memoryManager.PostVirtualKey('D');
+        static bool lastWasQ = false;
+
+        if (lastWasQ)
+            m_memoryManager.PostVirtualKeyHold('D', 10);
+        else
+            m_memoryManager.PostVirtualKeyHold('Q', 10);
+        lastWasQ = !lastWasQ;
         m_lastAntiAfkTick = now;
     }
 }

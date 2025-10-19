@@ -34,6 +34,7 @@ std::string WStringToString(const std::wstring& wstr)
     return (strTo);
 }
 
+
 /**
  * PMM_to_hex_string - Converts an address to a hexadecimal string representation.
  * @address: The address to convert.
@@ -497,24 +498,41 @@ HWND ProcessMemoryManager::GetMainWindowHandle()
 }
 
 /**
- * PostVirtualKey - Posts a virtual key press and release to the main window of the attached process.
- * @vk: The virtual key code to send.
- * Returns: True if successful, false otherwise.
+ * PostVirtualKeyHold - Holds a key for the specified duration using SendInput.
+ * @vk: Virtual-key code to send.
+ * @holdMilliseconds: Duration to hold before releasing.
+ * Returns: True if both down and up events were sent.
  */
-bool ProcessMemoryManager::PostVirtualKey(WORD vk)
+bool ProcessMemoryManager::PostVirtualKeyHold(WORD vk, DWORD holdMilliseconds)
 {
     if (!IsAttached())
-        return (false);
+        return false;
 
     HWND target = GetMainWindowHandle();
     if (!target)
-        return (false);
+        return false;
 
     UINT scan = ::MapVirtualKey(vk, MAPVK_VK_TO_VSC);
-    LPARAM lParamDown = (1) | (scan << 16);
-    LPARAM lParamUp = (1) | (scan << 16) | (1 << 30) | (1u << 31);
+    auto isExtendedKey = [](WORD v) -> bool {
+        switch (v)
+        {
+        case VK_LEFT: case VK_RIGHT: case VK_UP: case VK_DOWN:
+        case VK_INSERT: case VK_DELETE: case VK_HOME: case VK_END:
+        case VK_PRIOR: case VK_NEXT: case VK_RCONTROL: case VK_RMENU:
+        case VK_SNAPSHOT: case VK_DIVIDE: case VK_LWIN: case VK_RWIN:
+        case VK_APPS:
+            return true;
+        default:
+            return false;
+        }
+        };
+    DWORD extBit = isExtendedKey(vk) ? (1u << 24) : 0u;
+    LPARAM lParamDown = (1) | (static_cast<LPARAM>(scan) << 16) | extBit;
+    LPARAM lParamUp = (1) | (static_cast<LPARAM>(scan) << 16) | extBit | (1 << 30) | (1u << 31);
 
     BOOL ok1 = ::PostMessage(target, WM_KEYDOWN, vk, lParamDown);
+    if (!ok1) return false;
+    ::Sleep(holdMilliseconds);
     BOOL ok2 = ::PostMessage(target, WM_KEYUP, vk, lParamUp);
-    return (ok1 && ok2);
+    return (ok2 != FALSE);
 }

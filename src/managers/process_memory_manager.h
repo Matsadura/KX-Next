@@ -38,6 +38,7 @@ public:
     // Window and input helpers (process-related responsibilities)
     HWND GetMainWindowHandle();
     bool PostVirtualKey(WORD vk);
+    bool PostVirtualKeyHold(WORD vk, DWORD holdMilliseconds = 500);
 
     // Accessors
     DWORD GetProcessId() const
