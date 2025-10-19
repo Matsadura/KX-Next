@@ -145,7 +145,7 @@
     <ResourceCompile Include="KX-Next.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="images\app_icon.ico" />
+    <Image Include="images\app_ico.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

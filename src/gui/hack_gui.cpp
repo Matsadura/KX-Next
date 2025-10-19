@@ -329,9 +329,12 @@ void HackGUI::RenderLogSection()
             for (const auto& msg : current_messages)
             {
                 ImVec4 color = ImGui::GetStyleColorVec4(ImGuiCol_Text); // Default
-                if (msg.rfind("ERROR:", 0) == 0) color = ImVec4(1.0f, 0.4f, 0.4f, 1.0f); // Red
-                else if (msg.rfind("WARN:", 0) == 0) color = ImVec4(1.0f, 1.0f, 0.4f, 1.0f); // Yellow
-                else if (msg.rfind("INFO:", 0) == 0) color = ImVec4(0.5f, 1.0f, 0.5f, 1.0f); // Green
+                if (msg.rfind("ERROR:", 0) == 0)
+                    color = ImVec4(1.0f, 0.4f, 0.4f, 1.0f); // Red
+                else if (msg.rfind("WARN:", 0) == 0)
+                    color = ImVec4(1.0f, 1.0f, 0.4f, 1.0f); // Yellow
+                else if (msg.rfind("INFO:", 0) == 0)
+                    color = ImVec4(0.5f, 1.0f, 0.5f, 1.0f); // Green
                 ImGui::TextColored(color, "%s", msg.c_str());
             }
             // Auto-scroll
@@ -413,5 +416,5 @@ bool HackGUI::renderUI()
 
     ImGui::End();
 
-    return exit_requested;
+    return (exit_requested);
 }
