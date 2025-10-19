@@ -7,6 +7,7 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
+#include <chrono>
 
 /**
  * HackInitializationError - Custom exception for initialization failures.
@@ -29,6 +30,8 @@ public:
     bool Initialize(); // Performs process attachment and initial scans. Returns true on success.
 
     void refreshAddresses();
+    // Per-frame update hook
+    void updateAntiAfk();
 
     // Feature toggles/handlers
     void toggleFog(bool enable);
@@ -40,6 +43,7 @@ public:
     void toggleWallClimb(bool enable);
     void toggleClipping(bool enable);
     void handleFly(bool enable);
+	void toggleAntiAfk(bool enable);
 
     // Position saving/loading
     void savePosition();
@@ -54,6 +58,7 @@ public:
     bool IsWallClimbEnabled() const;
     bool IsClippingEnabled() const;
     bool IsFlying() const;         // Reflects if key was held/active
+	bool IsAntiAfkEnabled() const;
     // --- End State Getters ---
 
 private:
@@ -104,6 +109,8 @@ private:
     bool m_isFlyingActive = false;
     bool m_wasSuperSprinting = false; // Tracks hold state from last frame
     bool m_wasSprinting = false;      // Tracks if normal sprint *logic* was applied last frame
+    bool m_isAntiAfkActive = false;
+    std::chrono::steady_clock::time_point m_lastAntiAfkTick{};
 
     // Helpers
     void initializeOffsets();

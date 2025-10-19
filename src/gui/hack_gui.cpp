@@ -230,6 +230,10 @@ void HackGUI::RenderTogglesSection()
         if (ImGui::Checkbox("Clipping", &tempState))
             m_hack.toggleClipping(tempState);
 
+        tempState = m_hack.IsAntiAfkEnabled();
+        if (ImGui::Checkbox("Anti-AFK", &tempState))
+			m_hack.toggleAntiAfk(tempState);
+
         ImGui::Spacing();
     }
 }
@@ -406,6 +410,7 @@ bool HackGUI::renderUI()
 
     // Apply continuous states based on user preference toggles
     m_hack.handleSprint(m_sprintEnabled);
+    m_hack.updateAntiAfk(); // Tick Anti-AFK
 
     // Render UI sections
     RenderTogglesSection();

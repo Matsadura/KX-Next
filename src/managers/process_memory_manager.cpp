@@ -2,6 +2,7 @@
 
 #include "process_memory_manager.h"
 #include "../gui/status_ui.h" // For logging - TODO: Replace with dedicated logger interface
+#include "../hack/hack.h"
 #include <stdexcept>
 #include <vector>
 #include <sstream>
@@ -434,4 +435,86 @@ void ProcessMemoryManager::LogError(const std::string& message, bool includeWinE
     }
     // TODO: Replace with a call to a dedicated logger if created
     StatusUI::AddMessage(fullMessage);
+}
+
+/**
+ * GetMainWindowHandle - Retrieves the main window handle of the attached process.
+ * @hwnd: The handle to the main window, or nullptr if not found.
+ * @lParam: The target process ID.
+ * Returns: TRUE to continue enumeration, FALSE to stop.
+ */
+static BOOL CALLBACK PMM_EnumWindowsProcFindByPid(HWND hwnd, LPARAM lParam)
+{
+    DWORD windowPid = 0;
+    ::GetWindowThreadProcessId(hwnd, &windowPid);
+    DWORD targetPid = static_cast<DWORD>(lParam);
+
+    if (windowPid == targetPid)
+    {
+        if (::IsWindowVisible(hwnd) && (::GetWindow(hwnd, GW_OWNER) == nullptr))
+        {
+            ::SetProp(hwnd, L"__PMM_MAINWND__", (HANDLE)1);
+            return (FALSE);
+        }
+    }
+    return (TRUE);
+}
+
+/**
+ * GetMainWindowHandle - Retrieves the main window handle of the attached process.
+ * Returns: The handle to the main window, or nullptr if not found.
+ */
+HWND ProcessMemoryManager::GetMainWindowHandle()
+{
+    if (!IsAttached())
+        return (nullptr);
+
+    if (m_cachedMainWindow && ::IsWindow(m_cachedMainWindow))
+        return (m_cachedMainWindow);
+
+    // Clear any previous marks
+    ::EnumWindows([](HWND hwnd, LPARAM) -> BOOL {
+        if (::GetProp(hwnd, L"__PMM_MAINWND__"))
+            ::RemoveProp(hwnd, L"__PMM_MAINWND__");
+        return (TRUE);
+    }, 0);
+
+    ::EnumWindows(PMM_EnumWindowsProcFindByPid, (LPARAM)m_processId);
+
+    HWND result = nullptr;
+    ::EnumWindows([](HWND hwnd, LPARAM lParam) -> BOOL {
+        if (::GetProp(hwnd, L"__PMM_MAINWND__"))
+        {
+            *reinterpret_cast<HWND*>(lParam) = hwnd;
+            ::RemoveProp(hwnd, L"__PMM_MAINWND__");
+            return (FALSE);
+        }
+        return TRUE;
+    }, reinterpret_cast<LPARAM>(&result));
+
+    m_cachedMainWindow = result;
+    return (m_cachedMainWindow);
+}
+
+/**
+ * PostVirtualKey - Posts a virtual key press and release to the main window of the attached process.
+ * @vk: The virtual key code to send.
+ * Returns: True if successful, false otherwise.
+ */
+bool ProcessMemoryManager::PostVirtualKey(WORD vk)
+{
+    if (!IsAttached())
+        return (false);
+
+    HWND target = GetMainWindowHandle();
+    if (!target)
+        return (false);
+
+    UINT scan = ::MapVirtualKey(vk, MAPVK_VK_TO_VSC);
+    LPARAM lParamDown = (1) | (scan << 16);
+    LPARAM lParamUp = (1) | (scan << 16) | (1 << 30) | (1u << 31);
+
+    BOOL ok1 = ::PostMessage(target, WM_KEYDOWN, vk, lParamDown);
+    BOOL ok2 = ::PostMessage(target, WM_KEYUP, vk, lParamUp);
+    return (ok1 && ok2);
 }

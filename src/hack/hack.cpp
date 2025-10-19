@@ -1,10 +1,12 @@
 #include "hack.h"
 #include "constants.h"
+#include "../managers/process_memory_manager.h"
 #include <thread>
 #include <chrono>
 #include <string>
 #include <sstream>
 #include <iomanip>
+#include <atomic>
 
 using namespace Constants::Process;
 using namespace Constants::Offsets;
@@ -574,6 +576,38 @@ void Hack::handleFly(bool enable)
     }
 }
 
+/**
+ * toggleAntiAfk - Enables or disables the anti-AFK feature.
+ * @enable: True to enable anti-AFK, false to disable.
+ */
+void Hack::toggleAntiAfk(bool enable)
+{
+    m_isAntiAfkActive = enable;
+}
+
+/**
+ * updateAntiAfk - Performs periodic input simulation to prevent AFK detection.
+ * Should be called regularly in the main update loop.
+ */
+void Hack::updateAntiAfk()
+{
+    if (!m_isAntiAfkActive)
+        return;
+
+    const auto now = std::chrono::steady_clock::now();
+    if (m_lastAntiAfkTick.time_since_epoch().count() == 0)
+        m_lastAntiAfkTick = now;
+
+    auto elapsed = std::chrono::duration_cast<std::chrono::minutes>(now - m_lastAntiAfkTick);
+    if (elapsed.count() >= 4)
+    {
+        // Send 'Q' then 'D' to simulate small movement inputs
+        m_memoryManager.PostVirtualKey('Q');
+        m_memoryManager.PostVirtualKey('D');
+        m_lastAntiAfkTick = now;
+    }
+}
+
 // --- State Getters Implementation ---
 
 /**
@@ -654,4 +688,14 @@ bool Hack::IsClippingEnabled() const
 bool Hack::IsFlying() const
 {
     return (m_isFlyingActive);
+}
+
+/**
+ * IsAntiAfkEnabled - Checks if the anti-AFK feature is currently active.
+ *
+ * Returns true if anti-AFK is active, false otherwise.
+ */
+bool Hack::IsAntiAfkEnabled() const
+{
+    return (m_isAntiAfkActive);
 }

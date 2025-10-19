@@ -35,6 +35,10 @@ public:
     bool Nop(uintptr_t address, size_t size) const;   // Replaces bytes with NOPs
     bool Patch(uintptr_t address, const void* data, size_t size) const; // Writes raw data
 
+    // Window and input helpers (process-related responsibilities)
+    HWND GetMainWindowHandle();
+    bool PostVirtualKey(WORD vk);
+
     // Accessors
     DWORD GetProcessId() const
     {
@@ -54,13 +58,18 @@ private:
     const char* ScanPatternInternal(const char* base, size_t size, const char* pattern, const char* mask) const;
     void LogStatus(const std::string& message) const; // TODO: Replace with dedicated logger
     void LogError(const std::string& message, bool includeWinError = true) const; // TODO: Replace with dedicated logger
+	HWND findGameMainWindow();
+	bool sendVirtualKeyToGame(WORD vk);
 
     HANDLE m_processHandle = nullptr;
     DWORD m_processId = 0;
+    HWND m_cachedMainWindow = nullptr; // cache of main top-level window for the attached process
 
     // Non-copyable
     ProcessMemoryManager(const ProcessMemoryManager&) = delete;
     ProcessMemoryManager& operator=(const ProcessMemoryManager&) = delete;
+
+    HWND m_gw2Window = nullptr; // Cached main window handle for Gw2-64.exe
 };
 
 // Template Implementations
